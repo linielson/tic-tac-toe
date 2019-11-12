@@ -4,9 +4,10 @@ import './index.css'
 
 class Square extends React.Component {
   render() {
+    let { value } = this.props
     return (
       <button className="square">
-        {/* TODO */}
+        {value}
       </button>
     );
   }
@@ -14,7 +15,7 @@ class Square extends React.Component {
 
 class Board extends React.Component {
   renderSquare(i) {
-    return <Square />;
+    return <Square value={i}/>;
   }
 
   render() {
