@@ -73,6 +73,7 @@ class Game extends React.Component {
         squares: Array(9).fill(null)
       }],
       stepNumber: 0,
+      clickedStep: null,
       xIsNext: true
     }
   }
@@ -120,7 +121,15 @@ class Game extends React.Component {
         'Go to game start'
       return (
         <li key={step}>
-          <button onClick={() => this.jumpTo(step)}>{desc}</button>
+          <button
+            className={this.state.clickedStep === step ? 'button-bold' : ''}
+            onClick={() => {
+              this.setState({ clickedStep: step })
+              this.jumpTo(step)
+            }}
+          >
+            {desc}
+          </button>
         </li>
       )
     })
