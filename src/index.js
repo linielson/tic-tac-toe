@@ -109,7 +109,10 @@ class Game extends React.Component {
     const history = this.state.history
     const current = history[this.state.stepNumber]
     const winner = calculateWinner(current.squares)
-    const status = winner ? `Winner: ${winner}` : `Next player: ${this.nextPlayer()}`
+    const status = winner ?
+      `Winner: ${winner}` : (
+        this.state.stepNumber === 9 ? 'It was a tie' : `Next player: ${this.nextPlayer()}`
+      )
 
     const steps = history.map((_, step) => {
       const desc = step ?
