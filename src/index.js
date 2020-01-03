@@ -64,13 +64,19 @@ function calculateWinner(squares) {
   return null
 }
 
+function lastPositionPlayed(index) {
+  const positions = [[1, 1], [2, 1], [3, 1], [1, 2], [2, 2], [3, 2], [1, 3], [2, 3], [3, 3]]
+  return [positions[index][0], positions[index][1]]
+}
+
 class Game extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
       history: [{
-        squares: Array(9).fill(null)
+        squares: Array(9).fill(null),
+        position: [null, null]
       }],
       stepNumber: 0,
       clickedStep: null,
@@ -93,6 +99,7 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
+        position: lastPositionPlayed(index)
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext
@@ -115,9 +122,10 @@ class Game extends React.Component {
         this.state.stepNumber === 9 ? 'It was a tie' : `Next player: ${this.nextPlayer()}`
       )
 
-    const steps = history.map((_, step) => {
+    //TODO refactore
+    const steps = history.map((move, step) => {
       const desc = step ?
-        'Go to move #' + step :
+        `Go to move #${step} [${move.position[0]}, ${move.position[1]}]` :
         'Go to game start'
       return (
         <li key={step}>
