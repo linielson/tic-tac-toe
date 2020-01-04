@@ -80,7 +80,8 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       clickedStep: null,
-      xIsNext: true
+      xIsNext: true,
+      orderAsc: true
     }
   }
 
@@ -152,7 +153,12 @@ class Game extends React.Component {
         </div>
         <div className='game-info'>
           <div>{status}</div>
-          <ol>{steps}</ol>
+          <div>
+            <button onClick={() => {
+              this.setState({ orderAsc: !this.state.orderAsc })
+            }}>Change ordering</button>
+          </div>
+          <ol>{this.state.orderAsc ? steps : steps.reverse()}</ol>
         </div>
       </div>
     )
