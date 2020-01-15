@@ -21,23 +21,26 @@ class Board extends React.Component {
     )
   }
 
-  createBoard = () => {
-    let board = []
+  renderCol(square) {
+    return (this.renderSquare(square))
+  }
 
-    for (let i = 0; i < 3; i++) {
-      let squares = []
-      for (let j = 0; j < 3; j++) {
-        squares.push(this.renderSquare(j + (i * 3)))
-      }
-      board.push(<div key={i} className='board-row'>{squares}</div>)
-    }
-    return board
+  renderRow(row) {
+    const cols = [...Array(3).keys()]
+
+    return (
+      <div key={row} className='board-row'>
+        {cols.map((col) => { return this.renderCol(col + (row * cols.length)) })}
+      </div>
+    )
   }
 
   render() {
+    const rows = [...Array(3).keys()]
+
     return (
       <div>
-        {this.createBoard()}
+        {rows.map((row) => { return this.renderRow(row) })}
       </div>
     )
   }
