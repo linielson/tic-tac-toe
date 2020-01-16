@@ -29,6 +29,10 @@ ul {
   width: 34px;
 }
 
+.winner-square {
+  background: #6dca33;
+}
+
 .square:focus {
   outline: none;
 }

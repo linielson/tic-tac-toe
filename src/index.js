@@ -4,7 +4,7 @@ import './index.css'
 
 function Square(props) {
   return (
-    <button className='square' onClick={props.onClick}>
+    <button className={`square ${props.highlight ? 'winner-square' : ''}`} onClick={props.onClick}>
       {props.value}
     </button>
   )
@@ -12,10 +12,12 @@ function Square(props) {
 
 class Board extends React.Component {
   renderSquare(index) {
+    const square = this.props.squares[index]
     return (
       <Square
         key={index}
-        value={this.props.squares[index]}
+        value={square.value}
+        highlight={square.highlight}
         onClick={() => this.props.onClick(index)}
       />
     )
@@ -48,20 +50,13 @@ class Board extends React.Component {
 
 function calculateWinner(squares) {
   const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]
   ]
 
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i]
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a]
+    if (squares[a].value && squares[a].value === squares[b].value && squares[a].value === squares[c].value) {
+      return { winner: squares[a].value, positions: [a, b, c] }
     }
   }
   return null
@@ -72,13 +67,19 @@ function lastPositionPlayed(index) {
   return [positions[index][0], positions[index][1]]
 }
 
+function setWinningPositions(squares, positions) {
+  return squares.map((square, position) =>
+    positions.includes(position) ? { ...square, highlight: true } : square
+  )
+}
+
 class Game extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
       history: [{
-        squares: Array(9).fill(null),
+        squares: Array(9).fill({ value: null, highlight: false }),
         position: [null, null]
       }],
       stepNumber: 0,
@@ -97,9 +98,9 @@ class Game extends React.Component {
     const current = history[history.length - 1]
     const squares = [...current.squares]
 
-    if (calculateWinner(squares) || squares[index]) return
+    if (calculateWinner(squares) || squares[index].value) return
 
-    squares[index] = this.nextPlayer()
+    squares[index] = { ...squares[index], value: this.nextPlayer() }
     this.setState({
       history: history.concat([{
         squares: squares,
@@ -121,10 +122,14 @@ class Game extends React.Component {
     const history = this.state.history
     const current = history[this.state.stepNumber]
     const winner = calculateWinner(current.squares)
-    const status = winner ?
-      `Winner: ${winner}` : (
-        this.state.stepNumber === 9 ? 'It was a tie' : `Next player: ${this.nextPlayer()}`
-      )
+    let status
+
+    if (winner) {
+      current.squares = setWinningPositions(current.squares, winner.positions)
+      status = `Winner: ${winner.winner}`
+    } else {
+      status = this.state.stepNumber === 9 ? 'It was a tie' : `Next player: ${this.nextPlayer()}`
+    }
 
     //TODO refactore
     const steps = history.map((move, step) => {
