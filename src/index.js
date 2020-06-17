@@ -1,49 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Square from './Square'
+import Board from './Board'
 import './index.css'
-
-class Board extends React.Component {
-  renderSquare(index) {
-    const square = this.props.squares[index]
-    return (
-      <Square
-        key={index}
-        value={square.value}
-        highlight={square.highlight}
-        onClick={() => this.props.onClick(index)}
-      />
-    )
-  }
-
-  renderCol(square) {
-    return this.renderSquare(square)
-  }
-
-  renderRow(row) {
-    const cols = [...Array(3).keys()]
-
-    return (
-      <div key={row} className='board-row'>
-        {cols.map(col => {
-          return this.renderCol(col + row * cols.length)
-        })}
-      </div>
-    )
-  }
-
-  render() {
-    const rows = [...Array(3).keys()]
-
-    return (
-      <div>
-        {rows.map(row => {
-          return this.renderRow(row)
-        })}
-      </div>
-    )
-  }
-}
 
 function calculateWinner(squares) {
   const lines = [
@@ -100,6 +58,7 @@ class Game extends React.Component {
         {
           squares: Array(9).fill({ value: null, highlight: false }),
           position: [null, null],
+          status: '',
         },
       ],
       stepNumber: 0,
@@ -140,21 +99,28 @@ class Game extends React.Component {
     })
   }
 
-  render() {
-    const history = this.state.history
-    const current = history[this.state.stepNumber]
-    const winner = calculateWinner(current.squares)
-    let status
+  currentBoard(history) {
+    const currentStep = history[this.state.stepNumber]
+    const winner = calculateWinner(currentStep.squares)
 
     if (winner) {
-      current.squares = setWinningPositions(current.squares, winner.positions)
-      status = `Winner: ${winner.winner}`
+      currentStep.squares = setWinningPositions(
+        currentStep.squares,
+        winner.positions,
+      )
+      currentStep.status = `Winner: ${winner.winner}`
     } else {
-      status =
+      currentStep.status =
         this.state.stepNumber === 9
           ? 'It was a tie'
           : `Next player: ${this.nextPlayer()}`
     }
+    return currentStep
+  }
+
+  render() {
+    const history = this.state.history
+    const currentBoard = this.currentBoard(history)
 
     //TODO refactore
     const steps = history.map((move, step) => {
@@ -179,10 +145,13 @@ class Game extends React.Component {
     return (
       <div className='game'>
         <div className='game-board'>
-          <Board squares={current.squares} onClick={i => this.handleClick(i)} />
+          <Board
+            squares={currentBoard.squares}
+            onClick={i => this.handleClick(i)}
+          />
         </div>
         <div className='game-info'>
-          <div>{status}</div>
+          <div>{currentBoard.status}</div>
           <div>
             <button
               onClick={() => {
