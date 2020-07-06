@@ -2,32 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Board from './Board'
 import Step from './Step'
+import setWinner from './setWinner'
 import './index.css'
-
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ]
-
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i]
-    if (
-      squares[a].value &&
-      squares[a].value === squares[b].value &&
-      squares[a].value === squares[c].value
-    ) {
-      return { winner: squares[a].value, positions: [a, b, c] }
-    }
-  }
-  return null
-}
 
 function lastPositionPlayed(index) {
   const positions = [
@@ -78,7 +54,7 @@ class Game extends React.Component {
     const current = history[history.length - 1]
     const squares = [...current.squares]
 
-    if (calculateWinner(squares) || squares[index].value) return
+    if (setWinner(squares) || squares[index].value) return
 
     squares[index] = { ...squares[index], value: this.nextPlayer() }
     this.setState({
@@ -102,7 +78,7 @@ class Game extends React.Component {
 
   currentBoard(history) {
     const currentStep = history[this.state.stepNumber]
-    const winner = calculateWinner(currentStep.squares)
+    const winner = setWinner(currentStep.squares)
 
     if (winner) {
       currentStep.squares = setWinningPositions(
