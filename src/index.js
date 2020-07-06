@@ -129,13 +129,12 @@ class Game extends React.Component {
           key={step}
           step={step}
           movement={move}
-          className={this.state.clickedStep === step ? 'button-bold' : ''}
+          clickedStep={this.state.clickedStep}
           onClick={() => {
             this.setState({ clickedStep: step })
             this.jumpTo(step)
           }}
         />
-        // refatorar para passar 'clickedStep' por props
       )
     })
 

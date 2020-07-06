@@ -1,4 +1,5 @@
 import React from 'react'
+import './index.css'
 
 function description(step, movement) {
   return step
@@ -9,7 +10,10 @@ function description(step, movement) {
 function Step(props) {
   return (
     <li>
-      <button className={props.className} onClick={props.onClick}>
+      <button
+        className={props.clickedStep === props.step ? 'button-bold' : ''}
+        onClick={props.onClick}
+      >
         {description(props.step, props.movement)}
       </button>
     </li>
