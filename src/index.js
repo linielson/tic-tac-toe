@@ -2,23 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Board from './Board'
 import Step from './Step'
-import setWinner from './setWinner'
+import setWinner from './service/setWinner'
+import setLastPositionPlayed from './service/setLastPositionPlayed'
 import './index.css'
-
-function lastPositionPlayed(index) {
-  const positions = [
-    [1, 1],
-    [2, 1],
-    [3, 1],
-    [1, 2],
-    [2, 2],
-    [3, 2],
-    [1, 3],
-    [2, 3],
-    [3, 3],
-  ]
-  return [positions[index][0], positions[index][1]]
-}
 
 function setWinningPositions(squares, positions) {
   return squares.map((square, position) =>
@@ -61,7 +47,7 @@ class Game extends React.Component {
       history: history.concat([
         {
           squares: squares,
-          position: lastPositionPlayed(index),
+          position: setLastPositionPlayed(index),
         },
       ]),
       stepNumber: history.length,
