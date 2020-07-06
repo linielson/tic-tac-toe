@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Board from './Board'
+import Step from './Step'
 import './index.css'
 
 function calculateWinner(squares) {
@@ -122,23 +123,19 @@ class Game extends React.Component {
     const history = this.state.history
     const currentBoard = this.currentBoard(history)
 
-    //TODO refactore
     const steps = history.map((move, step) => {
-      const desc = step
-        ? `Go to move #${step} [${move.position[0]}, ${move.position[1]}]`
-        : 'Go to game start'
       return (
-        <li key={step}>
-          <button
-            className={this.state.clickedStep === step ? 'button-bold' : ''}
-            onClick={() => {
-              this.setState({ clickedStep: step })
-              this.jumpTo(step)
-            }}
-          >
-            {desc}
-          </button>
-        </li>
+        <Step
+          key={step}
+          step={step}
+          movement={move}
+          className={this.state.clickedStep === step ? 'button-bold' : ''}
+          onClick={() => {
+            this.setState({ clickedStep: step })
+            this.jumpTo(step)
+          }}
+        />
+        // refatorar para passar 'clickedStep' por props
       )
     })
 
